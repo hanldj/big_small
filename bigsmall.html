@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>猜大小骰子遊戲</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+    button {
+      font-size: 20px;
+      margin: 10px;
+      padding: 10px 20px;
+    }
+    .dice-container {
+      margin: 20px;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+    .dice {
+      width: 100px;
+      height: 100px;
+    }
+    .result {
+      font-size: 24px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🎲 猜大小骰子遊戲 🎲</h1>
+  <p>猜猜兩顆骰子總和是「大」(≥7) 還是「小」(≤6)？</p>
+
+  <button onclick="guess('big')">猜 大</button>
+  <button onclick="guess('small')">猜 小</button>
+
+  <div class="dice-container">
+    <img id="dice1" class="dice" src="dice1.png" alt="Dice 1">
+    <img id="dice2" class="dice" src="dice1.png" alt="Dice 2">
+  </div>
+
+  <div class="result" id="output"></div>
+
+  <script>
+    function rollDiceValue() {
+      return Math.floor(Math.random() * 6) + 1;
+    }
+
+    function setDiceImage(diceId, value) {
+      document.getElementById(diceId).src = `dice${value}.png`;
+    }
+
+    function guess(playerGuess) {
+      const dice1El = document.getElementById("dice1");
+      const dice2El = document.getElementById("dice2");
+      const output = document.getElementById("output");
+      output.innerHTML = "🎲 擲骰子中...";
+
+      let interval1, interval2;
+
+      // 開始隨機滾動顯示
+      interval1 = setInterval(() => {
+        setDiceImage("dice1", rollDiceValue());
+      }, 100);
+
+      interval2 = setInterval(() => {
+        setDiceImage("dice2", rollDiceValue());
+      }, 100);
+
+      // 停止滾動並顯示真正結果
+      setTimeout(() => {
+        clearInterval(interval1);
+        clearInterval(interval2);
+
+        const final1 = rollDiceValue();
+        const final2 = rollDiceValue();
+        const sum = final1 + final2;
+        const outcome = sum >= 7 ? 'big' : 'small';
+
+        setDiceImage("dice1", final1);
+        setDiceImage("dice2", final2);
+
+        let resultText = `CPU 丟出總和 ${sum}（${outcome === 'big' ? '大' : '小'}）<br>`;
+        resultText += (playerGuess === outcome) ?
+          "✅ 你猜對了！你贏了 🎉" :
+          "❌ 你猜錯了！CPU 獲勝 😢";
+
+        output.innerHTML = resultText;
+
+      }, 1500); // 滾動 1.5 秒後顯示結果
+    }
+  </script>
+
+</body>
+</html>
